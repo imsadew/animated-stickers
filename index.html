@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Telegram .tgs Sticker Gallery</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Tailwind CSS CDN (Official) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- DaisyUI CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.10.4/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <!-- LottieFiles TGS Player -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/tgs-player.js"></script>
+    <style>
+      .bg-blur {
+        pointer-events: none;
+        z-index: 0;
+      }
+      .blur-ball {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.5;
+        will-change: transform;
+        transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .light-bg .blur1 {
+        background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+      }
+      .light-bg .blur2 {
+        background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      }
+      .light-bg .blur3 {
+        background: linear-gradient(135deg, #b6fbff, #83a4d4);
+      }
+      .dark-bg .blur1 {
+        background: linear-gradient(135deg, #283e51, #485563);
+      }
+      .dark-bg .blur2 {
+        background: linear-gradient(135deg, #232526, #415a77);
+      }
+      .dark-bg .blur3 {
+        background: linear-gradient(135deg, #304352, #1e3c72);
+      }
+    </style>
+  </head>
+  <body
+    class="relative min-h-screen transition-all duration-500 bg-base-100 dark:bg-neutral"
+    data-theme="dark"
+  >
+    <!-- Animated Blur Background -->
+    <div
+      id="blurBG"
+      class="bg-blur absolute inset-0 w-full h-full dark-bg transition-all duration-500"
+    >
+      <div
+        class="blur-ball blur1"
+        style="width: 320px; height: 320px; left: 7vw; top: 8vh"
+      ></div>
+      <div
+        class="blur-ball blur2"
+        style="width: 220px; height: 220px; left: 60vw; top: 30vh"
+      ></div>
+      <div
+        class="blur-ball blur3"
+        style="width: 160px; height: 160px; left: 30vw; top: 65vh"
+      ></div>
+    </div>
+    <div
+      class="relative z-10 flex flex-col w-full min-h-screen items-center transition-all duration-500 pb-24"
+    >
+      <!-- Header -->
+      <header class="mt-10 mb-1 flex flex-col items-center">
+        <h1
+          class="text-2xl sm:text-3xl font-bold text-base-content drop-shadow"
+        >
+          Telegram <span class="text-primary">.tgs</span> Sticker Gallery
+        </h1>
+        <p class="text-base-content/70 text-base sm:text-lg mt-1">
+          Your stickers, your style!
+        </p>
+      </header>
+      <!-- Upload Form -->
+      <div class="w-full max-w-md mx-auto mt-8">
+        <div
+          class="card bg-base-200/70 dark:bg-base-200/60 shadow-xl backdrop-blur-md border border-base-300 dark:border-base-300 transition-all"
+        >
+          <div class="card-body">
+            <form id="tgsForm" autocomplete="off" class="space-y-4">
+              <div>
+                <label class="label"
+                  ><span class="label-text text-base-content"
+                    >Choose a .tgs sticker file</span
+                  ></label
+                >
+                <input
+                  type="file"
+                  id="tgsFile"
+                  accept=".tgs"
+                  required
+                  class="file-input file-input-bordered w-full"
+                />
+              </div>
+              <div>
+                <label class="label"
+                  ><span class="label-text text-base-content"
+                    >Give your sticker a name</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  id="tgsName"
+                  maxlength="24"
+                  required
+                  placeholder="e.g. Smile"
+                  class="input input-bordered w-full"
+                />
+              </div>
+              <div
+                id="previewWrap"
+                class="flex justify-center"
+                style="display: none"
+              >
+                <div
+                  class="rounded-full shadow bg-white p-3 flex items-center justify-center animate-in fade-in zoom-in duration-500"
+                >
+                  <tgs-player
+                    id="previewPlayer"
+                    style="width: 90px; height: 90px"
+                    autoplay
+                    loop
+                  ></tgs-player>
+                </div>
+              </div>
+              <div>
+                <button
+                  type="submit"
+                  class="btn btn-primary w-full gap-2 text-lg"
+                >
+                  <span>Save Sticker</span>
+                  <svg
+                    width="22"
+                    height="22"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="m5 13 4 4L19 7" />
+                  </svg>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- Sticker Gallery -->
+      <section id="galleryWrap" class="mt-10 w-full max-w-4xl px-2 hidden">
+        <div class="mb-4 flex items-center gap-2">
+          <svg
+            width="23"
+            height="23"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="m8 12 2 2 4-4" />
+          </svg>
+          <span class="text-lg font-bold text-base-content"
+            >Saved Stickers</span
+          >
+        </div>
+        <div
+          id="stickerList"
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-7"
+        ></div>
+      </section>
+      <!-- Footer -->
+      <footer
+        class="fixed bottom-2 left-1/2 -translate-x-1/2 w-auto flex items-center gap-2 bg-transparent text-center z-50"
+      >
+        <tgs-player
+          src="https://malith-rukshan.github.io/animated-country-flags/tgs/LK.tgs"
+          autoplay
+          loop
+          style="width: 32px; height: 32px"
+        >
+        </tgs-player>
+        <span class="text-sm text-base-content font-semibold tracking-wide">
+          Made by
+          <a href="https://t.me/SadewPerera" target="_blank">Sadew Perera</a>
+        </span>
+      </footer>
+    </div>
+    <!-- JS: Blur BG, TGS logic, IndexedDB, theme observer -->
+    <script>
+      // Blur background mouse tracking
+      document.addEventListener("mousemove", function (e) {
+        let x = e.clientX / window.innerWidth,
+          y = e.clientY / window.innerHeight;
+        let t = (el, tx, ty) =>
+          (el.style.transform = `translate(${tx}px,${ty}px)`);
+        t(document.querySelector(".blur1"), x * 40 - 10, y * 35 - 10);
+        t(document.querySelector(".blur2"), x * -50 + 10, y * -50 + 10);
+        t(document.querySelector(".blur3"), x * 60 - 20, y * 55 - 15);
+      });
+
+      // Theme: update blur bg color on DaisyUI theme change
+      function updateBGTheme() {
+        const blurBG = document.getElementById("blurBG");
+        // DaisyUI sets data-theme on html
+        const theme =
+          document.documentElement.getAttribute("data-theme") ||
+          document.body.getAttribute("data-theme");
+        if (
+          theme &&
+          (theme === "dark" ||
+            theme === "synthwave" ||
+            theme === "dracula" ||
+            theme === "night" ||
+            theme === "black")
+        ) {
+          blurBG.classList.remove("light-bg");
+          blurBG.classList.add("dark-bg");
+        } else {
+          blurBG.classList.remove("dark-bg");
+          blurBG.classList.add("light-bg");
+        }
+      }
+      // Observe theme changes
+      const observer = new MutationObserver(updateBGTheme);
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
+      });
+      observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
+      });
+      document.addEventListener("DOMContentLoaded", updateBGTheme);
+
+      // IndexedDB logic
+      const DB_NAME = "tgsStickerDB",
+        DB_STORE = "stickers";
+      let db;
+      function openDB() {
+        return new Promise((resolve, reject) => {
+          let req = indexedDB.open(DB_NAME, 1);
+          req.onupgradeneeded = (e) => {
+            db = e.target.result;
+            if (!db.objectStoreNames.contains(DB_STORE))
+              db.createObjectStore(DB_STORE, {
+                keyPath: "id",
+                autoIncrement: true,
+              });
+          };
+          req.onsuccess = (e) => {
+            db = e.target.result;
+            resolve(db);
+          };
+          req.onerror = (e) => {
+            reject(e);
+          };
+        });
+      }
+      function addSticker(name, tgsArrayBuffer) {
+        return openDB().then(
+          (db) =>
+            new Promise((resolve, reject) => {
+              let tx = db.transaction([DB_STORE], "readwrite");
+              let store = tx.objectStore(DB_STORE);
+              let req = store.add({ name, tgs: tgsArrayBuffer });
+              req.onsuccess = () => resolve();
+              req.onerror = (e) => reject(e);
+            })
+        );
+      }
+      function getAllStickers() {
+        return openDB().then(
+          (db) =>
+            new Promise((resolve, reject) => {
+              let tx = db.transaction([DB_STORE], "readonly");
+              let store = tx.objectStore(DB_STORE);
+              let req = store.getAll();
+              req.onsuccess = (e) => resolve(e.target.result);
+              req.onerror = (e) => reject(e);
+            })
+        );
+      }
+      function deleteSticker(id) {
+        return openDB().then(
+          (db) =>
+            new Promise((resolve, reject) => {
+              let tx = db.transaction([DB_STORE], "readwrite");
+              let store = tx.objectStore(DB_STORE);
+              let req = store.delete(id);
+              req.onsuccess = () => resolve();
+              req.onerror = (e) => reject(e);
+            })
+        );
+      }
+      // UI Logic
+      let selectedTgsBuffer = null;
+      document
+        .getElementById("tgsFile")
+        .addEventListener("change", function (e) {
+          let file = e.target.files[0];
+          if (file && file.name.toLowerCase().endsWith(".tgs")) {
+            let reader = new FileReader();
+            reader.onload = function (ev) {
+              selectedTgsBuffer = ev.target.result;
+              let blob = new Blob([selectedTgsBuffer], {
+                type: "application/gzip",
+              });
+              let url = URL.createObjectURL(blob);
+              let previewPlayer = document.getElementById("previewPlayer");
+              previewPlayer.setAttribute("src", url);
+              document.getElementById("previewWrap").style.display = "flex";
+            };
+            reader.readAsArrayBuffer(file);
+          } else {
+            selectedTgsBuffer = null;
+            document.getElementById("previewWrap").style.display = "none";
+          }
+        });
+      document
+        .getElementById("tgsForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          let name = document.getElementById("tgsName").value.trim();
+          if (!selectedTgsBuffer) return alert("Please choose a .tgs file!");
+          if (!name) return alert("Please enter a name for your sticker!");
+          addSticker(name, selectedTgsBuffer).then(() => {
+            document.getElementById("tgsForm").reset();
+            document.getElementById("previewWrap").style.display = "none";
+            selectedTgsBuffer = null;
+            showStickers();
+          });
+        });
+      function showStickers() {
+        getAllStickers().then((list) => {
+          let stickerList = document.getElementById("stickerList");
+          stickerList.innerHTML = "";
+          if (list.length === 0) {
+            document.getElementById("galleryWrap").classList.add("hidden");
+            return;
+          }
+          document.getElementById("galleryWrap").classList.remove("hidden");
+          for (const sticker of list) {
+            let item = document.createElement("div");
+            item.className =
+              "flex flex-col items-center rounded-xl shadow bg-base-200 dark:bg-base-200/80 p-3 pt-4 relative group transition hover:scale-105 duration-200";
+            let blob = new Blob([sticker.tgs], { type: "application/gzip" });
+            let url = URL.createObjectURL(blob);
+            let tgs = document.createElement("tgs-player");
+            tgs.setAttribute("src", url);
+            tgs.setAttribute("autoplay", "true");
+            tgs.setAttribute("loop", "true");
+            tgs.style.width = "54px";
+            tgs.style.height = "54px";
+            item.appendChild(tgs);
+            let nameDiv = document.createElement("div");
+            nameDiv.className =
+              "font-semibold text-sm text-base-content mt-2 mb-1 text-center w-16 truncate";
+            nameDiv.innerText = sticker.name;
+            item.appendChild(nameDiv);
+            let actions = document.createElement("div");
+            actions.className = "flex gap-2 mt-1 w-full justify-center";
+            // Download button
+            let dlBtn = document.createElement("button");
+            dlBtn.className =
+              "btn btn-accent btn-xs font-semibold rounded px-3";
+            dlBtn.innerText = "Download";
+            dlBtn.onclick = () => {
+              let a = document.createElement("a");
+              a.href = url;
+              a.download = (sticker.name || "sticker") + ".tgs";
+              document.body.appendChild(a);
+              a.click();
+              setTimeout(() => document.body.removeChild(a), 200);
+            };
+            actions.appendChild(dlBtn);
+            // Delete button
+            let delBtn = document.createElement("button");
+            delBtn.className =
+              "btn btn-error btn-xs font-semibold rounded px-3";
+            delBtn.innerText = "Delete";
+            delBtn.onclick = () => {
+              if (confirm("Delete this sticker?"))
+                deleteSticker(sticker.id).then(showStickers);
+            };
+            actions.appendChild(delBtn);
+            item.appendChild(actions);
+            stickerList.appendChild(item);
+          }
+        });
+      }
+      showStickers();
+    </script>
+  </body>
+</html>

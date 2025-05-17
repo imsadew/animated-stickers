@@ -1,0 +1,38 @@
+[
+    {
+        "name": "Love",
+        "code": "LOVE",
+        "emoji": "❤️",
+        "custom_emoji_id": "5501234567890123456"
+    },
+    {
+        "name": "Hi",
+        "code": "HI",
+        "emoji": "👋",
+        "custom_emoji_id": "5501234567890123457"
+    },
+    {
+        "name": "Lk",
+        "code": "LK",
+        "emoji": "👍",
+        "custom_emoji_id": "5501234567890123458"
+    },
+    {
+        "name": "Up",
+        "code": "UP",
+        "emoji": "⬆️",
+        "custom_emoji_id": "5501234567890123459"
+    },
+    {
+        "name": "CatInHat",
+        "code": "CATINHAT",
+        "emoji": "😺",
+        "custom_emoji_id": "5501234567890123460"
+    },
+    {
+        "name": "Owl1",
+        "code": "OWL1",
+        "emoji": "🦉",
+        "custom_emoji_id": "5501234567890123461"
+    }
+]
